@@ -8,7 +8,6 @@ function App() {
     fetch("https://randomuser.me/api?results=100")
       .then(async (res) => await res.json())
       .then((res) => {
-        console.log("🚀 ~ file: App.tsx:11 ~ .then ~ res:", res.results);
         setUsers(res.results);
       })
       .catch((err) => console.log(err));
