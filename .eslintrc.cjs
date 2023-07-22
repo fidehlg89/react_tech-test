@@ -22,6 +22,9 @@ module.exports = {
   },
   plugins: ["react"],
   rules: {
+    "@typescript-eslint/space-before-function-paren": "off",
+    "@typescript-eslint/quotes": "off",
+    "@typescript-eslint/member-delimiter-style": "off",
     "@typescript-eslint/semi": "off",
     "@typescript-eslint/no-unused-vars": "off",
     "@typescript-eslint/explicit-function-return-type": "off",

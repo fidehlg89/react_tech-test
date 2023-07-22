@@ -1,13 +1,13 @@
 /* eslint-disable  */
 import { useEffect, useMemo, useRef, useState } from "react";
 import "./App.css";
-import { type User } from "./types.d";
+import { SortBy, type User } from "./types.d";
 import UsersList from "./components/UsersList";
 
 function App() {
   const [users, setUsers] = useState<User[]>([]);
   const [showColors, setShowColors] = useState(false);
-  const [sortByCountry, setSortByCountry] = useState(false);
+  const [sorting, setSorting] = useState<SortBy>(SortBy.NONE);
   const originalUsers = useRef<User[]>([]);
   const [filterCountry, setFilterCountry] = useState<string | null>(null);
 
@@ -16,7 +16,9 @@ function App() {
   };
 
   const toggleSortByCountry = () => {
-    setSortByCountry((prevState) => !prevState);
+    const newSortingValue =
+      sorting === SortBy.NONE ? SortBy.COUNTRY : SortBy.NONE;
+    setSorting(newSortingValue);
   };
 
   const handleDelete = (email: string) => {
@@ -26,6 +28,10 @@ function App() {
 
   const handleReset = () => {
     setUsers(originalUsers.current);
+  };
+
+  const handleChangeSort = (sort: SortBy) => {
+    setSorting(sort);
   };
 
   useEffect(() => {
@@ -48,15 +54,24 @@ function App() {
             .includes(filterCountry.toLowerCase());
         })
       : users;
-  },[filterCountry, users])
+  }, [filterCountry, users]);
 
   const sortedUsers = useMemo(() => {
-    return sortByCountry
-      ? [...filteredUsers].sort((a, b) => {
-          return a.location.country.localeCompare(b.location.country);
-        })
-      : filteredUsers;
-  }, [filteredUsers, sortByCountry]);
+
+    if (sorting === SortBy.NONE) return filteredUsers;
+
+    const compareProperties: Record<string, (user: User)=>any> = {
+      [SortBy.COUNTRY]: user => user.location.country,
+      [SortBy.NAME]: user => user.name.first,
+      [SortBy.LAST]: user => user.name.last,
+    }
+
+    return [...filteredUsers].sort((a,b)=>{
+      const extractPoperty=compareProperties[sorting];
+      return extractPoperty(a).localeCompare(extractPoperty(b))
+    })
+
+  }, [filteredUsers, sorting]);
 
   return (
     <div className="App">
@@ -64,7 +79,9 @@ function App() {
       <header>
         <button onClick={toggleColors}>Colorear filas</button>
         <button onClick={toggleSortByCountry}>
-          {sortByCountry ? "No ordenar por país" : "Ordenar por país"}
+          {sorting === SortBy.COUNTRY
+            ? "No ordenar por país"
+            : "Ordenar por país"}
         </button>
         <button onClick={handleReset}>Resetear Estado</button>
         <input
@@ -76,6 +93,7 @@ function App() {
       </header>
       <main>
         <UsersList
+          changeSorting={handleChangeSort}
           showColors={showColors}
           users={sortedUsers}
           deleteUser={handleDelete}
