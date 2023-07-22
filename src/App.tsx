@@ -10,6 +10,7 @@ function App() {
   const [sorting, setSorting] = useState<SortBy>(SortBy.NONE);
   const originalUsers = useRef<User[]>([]);
   const [filterCountry, setFilterCountry] = useState<string | null>(null);
+  const [sortOrder, setSortOrder] = useState(false)
 
   const toggleColors = () => {
     setShowColors(!showColors);
@@ -31,6 +32,7 @@ function App() {
   };
 
   const handleChangeSort = (sort: SortBy) => {
+    setSortOrder(!sortOrder);
     setSorting(sort);
   };
 
@@ -66,12 +68,15 @@ function App() {
       [SortBy.LAST]: user => user.name.last,
     }
 
+
+    console.log("🚀 ~ file: App.tsx:72 ~ sortedUsers ~ sortOrder:", sortOrder)
+
     return [...filteredUsers].sort((a,b)=>{
       const extractPoperty=compareProperties[sorting];
-      return extractPoperty(a).localeCompare(extractPoperty(b))
+      return sortOrder===true ? extractPoperty(a).localeCompare(extractPoperty(b)) : extractPoperty(b).localeCompare(extractPoperty(a))
     })
 
-  }, [filteredUsers, sorting]);
+  }, [filteredUsers, sorting, sortOrder]);
 
   return (
     <div className="App">
