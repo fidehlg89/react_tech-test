@@ -41,8 +41,6 @@ function App() {
       <h1>Lista de Usuarios</h1>
       <header>
         <button onClick={toggleColors}>Colorear filas</button>
-      </header>
-      <header>
         <button onClick={toggleSortByCountry}>
           {sortByCountry ? "No ordenar por país" : "Ordenar por país"}
         </button>
