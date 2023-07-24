@@ -68,9 +68,6 @@ function App() {
       [SortBy.LAST]: user => user.name.last,
     }
 
-
-    console.log("🚀 ~ file: App.tsx:72 ~ sortedUsers ~ sortOrder:", sortOrder)
-
     return [...filteredUsers].sort((a,b)=>{
       const extractPoperty=compareProperties[sorting];
       return sortOrder===true ? extractPoperty(a).localeCompare(extractPoperty(b)) : extractPoperty(b).localeCompare(extractPoperty(a))
